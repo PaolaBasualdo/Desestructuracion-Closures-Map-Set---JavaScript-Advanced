@@ -1,0 +1,61 @@
+function crearGestorDeTareas() {
+    const tareas = new Map(); // Encapsulado en el closure
+
+    function agregarTarea({ id, descripcion, etiquetas = [] }) {
+        if (tareas.has(id)) {
+            console.log("❌ Ya existe una tarea con ese ID");
+            return false;
+        }
+
+        tareas.set(id, {
+            id,
+            descripcion,
+            completada: false,
+            etiquetas: new Set(etiquetas)
+        });
+
+        return true;
+    }
+
+    function marcarCompletada(id) {
+        const tarea = tareas.get(id);
+        if (!tarea) return false;
+
+        tarea.completada = true;
+        return true;
+    }
+
+    function obtenerTareasPorEtiqueta(etiqueta) {
+        const resultado = [];
+
+        for (const tarea of tareas.values()) {
+            if (tarea.etiquetas.has(etiqueta)) {
+                resultado.push(tarea.descripcion);
+            }
+        }
+
+        return resultado;
+    }
+
+    function obtenerResumenTareas() {
+        let total = 0, completadas = 0;
+
+        for (const tarea of tareas.values()) {
+            total++;
+            if (tarea.completada) completadas++;
+        }
+
+        return {
+            total,
+            completadas,
+            pendientes: total - completadas
+        };
+    }
+
+    return {
+        agregarTarea,
+        marcarCompletada,
+        obtenerTareasPorEtiqueta,
+        obtenerResumenTareas
+    };
+}
